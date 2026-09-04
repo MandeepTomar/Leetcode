@@ -12,25 +12,32 @@
  */
 class Solution {
 public:
-    bool checkq(TreeNode* curr, queue<TreeNode*> q, int& cnt,int n) {
+    bool checkq(queue<TreeNode*> q, int& cnt,int n) {
         if (q.empty()) {
             return true;
         }
         if (cnt % 2 == 0) {
-            int min_val = curr->val;
+            int min_val = q.front()->val;
+            q.pop();
+            n--;
             while (n--) {
                 if (q.front()->val <= min_val) {
                     return false;
                 }
+                min_val=q.front()->val;
                 q.pop();
+            
             }
 
         } else if (cnt % 2 != 0) {
-            int max_val = curr->val;
+            int max_val = q.front()->val;
+            q.pop();
+            n--;
             while (n--) {
                 if (q.front()->val >= max_val) {
                     return false;
                 }
+                max_val=q.front()->val;
                 q.pop();
             }
         }
@@ -46,14 +53,13 @@ public:
         int cnt = 0;
         while (!q.empty()) {
             int n = q.size();
+            bool oddeven=checkq(q,cnt,n);
+            if(!oddeven){
+                return false;
+            }
             while (n--) {
                 TreeNode* curr = q.front();
                 q.pop();
-                bool oddeven = checkq(curr, q, cnt,n);
-                if (!oddeven) {
-                    return false;
-                }
-
                 if (cnt % 2 == 0) {
                     if (curr->val % 2 == 0) {
                         return false;
