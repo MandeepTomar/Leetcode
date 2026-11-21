@@ -1,26 +1,26 @@
 class Solution {
 public:
-
-    vector<int>result;
-    void solve(vector<int>&nums,int idx,vector<int>&cookie,int k){
-        if(idx>=nums.size()){
-            int maxi=*max_element(cookie.begin(),cookie.end());
-            result.push_back(maxi);
+    int result=INT_MAX;
+    int n;
+    void solve(int idx,vector<long long>&children,vector<int>&cookies,int k){
+        if(idx>=cookies.size()){
+            int maxi=*max_element(children.begin(),children.end());
+            result=min(maxi,result);
             return;
         }
-        int cookies=nums[idx];
-        for(int j=0;j<k;j++){
-            cookie[j]+=cookies;
-            //explore
-            solve(nums,idx+1,cookie,k);
-            cookie[j]-=cookies;
+        int cookie=cookies[idx];
+        for(int i=0;i<k;i++){
+            
+            children[i]+=cookie;
+           solve(idx+1,children,cookies,k);
+           children[i]-=cookie;
         }
     }
-    
-    int distributeCookies(vector<int>& nums, int k) {
-      vector<int>cookie(k,0);  
-      solve(nums,0,cookie,k); 
-      int mini=*min_element(result.begin(),result.end());
-      return mini;
+
+    int distributeCookies(vector<int>& cookies, int k) {
+        n=cookies.size();
+        vector<long long>children(k,0);
+        solve(0,children,cookies,k);
+        return result;
     }
 };
