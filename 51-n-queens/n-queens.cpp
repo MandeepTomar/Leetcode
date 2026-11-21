@@ -1,59 +1,48 @@
 class Solution {
 public:
-    int r, c;
-
-    vector<vector<string>> ans;
-    vector<vector<int>> directions = {{-1, -1}, {1, 1}, {-1, 1}, {1, -1}};
-
-    bool isvalidcol(int& row, int& col, vector<string>& temp) {
-        for (int i = 0; i < r; i++) {
-            if (temp[i][col] == 'Q') {
+    vector<vector<int>> directions{{-1, -1}, {-1, 1}};
+    bool isvalidcol(int row, int col, int n, vector<string>& board) {
+        for (int i = row; i >= 0; i--) {
+            if (board[i][col] == 'Q') {
                 return false;
             }
         }
         return true;
     }
-    bool isvaliddiagonal(int& row, int& col, vector<string>& temp) {
-
-        // How do you traverse diagonally in a vector
-        for (auto dir : directions) {
-            int new_row = row + dir[0];
-            int new_col = col + dir[1];
-            while (new_row >= 0 && new_col >= 0 && new_row < r && new_col < c) {
-
-                if (temp[new_row][new_col] == 'Q') {
+    bool isvaliddiagonal(int row, int col, int n, vector<string>& board) {
+        for (auto& dir : directions) {
+            int new_i = row;
+            int new_j = col;
+            while (new_i >= 0 && new_j >= 0 && new_i < n && new_j < n) {
+                if (board[new_i][new_j] == 'Q') {
                     return false;
                 }
-                new_row += dir[0];
-                new_col += dir[1];
+                new_i += dir[0];
+                new_j += dir[1];
             }
         }
-
         return true;
     }
 
-    void solve(int row, int col, vector<string>& temp) {
-        if (row == r) {
-            ans.push_back(temp);
+    vector<vector<string>> ans;
+    void solve(int row, int n, vector<string>& board) {
+        if (row == n) {
+            ans.push_back(board);
             return;
         }
-        for (int col = 0; col < c; col++) {
-            if (isvalidcol(row, col, temp) && isvaliddiagonal(row, col, temp)) {
-                temp[row][col] = 'Q';
-                solve(row + 1, col, temp);
-            }
+        for (int i = 0; i < n; i++) {
+            if (isvalidcol(row, i, n, board) &&
+                isvaliddiagonal(row, i, n, board)) {
 
-            temp[row][col] = '.';
+                board[row][i] = 'Q';
+                solve(row + 1,  n, board);
+                board[row][i] = '.';
+            }
         }
     }
-
-    vector<vector<string>> solveNQueens(int n) {
-
-        vector<string> temp(n, string(n, '.'));
-        r = temp.size();
-        c = temp[0].size();
-        
-         solve(0, 0, temp);
-        return ans;
-    }
-};
+        vector<vector<string>> solveNQueens(int n) {
+            vector<string> board(n, string(n, '.'));
+            solve(0, n, board);
+            return ans;
+        }
+    };
